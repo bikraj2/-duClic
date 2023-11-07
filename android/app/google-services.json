@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "209505196489",
+    "project_id": "sikshya-c8cb0",
+    "storage_bucket": "sikshya-c8cb0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:209505196489:android:792b905a897efadb3ab018",
+        "android_client_info": {
+          "package_name": "com.example.sikshya"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQ0DBzImNTKGESlHeIB2He5BseG6XMXlk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
