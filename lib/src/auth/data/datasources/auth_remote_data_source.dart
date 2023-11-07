@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -127,15 +130,51 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   @override
   Future<void> updateUser(
-      {required UpdateUserAction action, required userdata}) async {
-    switch (action) {
-      case UpdateUserAction.email:
-        await _authClient.currentUser?.updateEmail(userdata as String);
-      case UpdateUserAction.displayName:
-        await _authClient.currentUser?.updateDisplayName(userdata as String);
-
-        break;
-      default:
+      {required UpdateUserAction action, required dynamic userdata}) async {
+    try {
+      switch (action) {
+        case UpdateUserAction.email:
+          await _authClient.currentUser?.updateEmail(userdata as String);
+          await _updateUser({'email': userdata});
+        case UpdateUserAction.displayName:
+          await _authClient.currentUser?.updateDisplayName(userdata as String);
+          await _updateUser({'fullName': userdata});
+        case UpdateUserAction.profilePic:
+          final ref = _dbclient
+              .ref()
+              .child('profilePics/${_authClient.currentUser?.uid}');
+          await ref.putFile(userdata as File);
+          final url = await ref.getDownloadURL();
+          await _authClient.currentUser?.updateDisplayName(url);
+          await _updateUser({'fullName': url});
+        case UpdateUserAction.password:
+          if (_authClient.currentUser == null) {
+            throw const ServerException(
+                message: 'User Does not exist', statusCode: 500);
+          }
+          final newData = jsonDecode(userdata as String) as DataMap;
+          await _authClient.currentUser?.reauthenticateWithCredential(
+            EmailAuthProvider.credential(
+              email: _authClient.currentUser!.email!,
+              password: newData['oldPassowrd'] as String,
+            ),
+          );
+          await _authClient.currentUser
+              ?.updatePassword(newData['newPassword'] as String);
+        case UpdateUserAction.bio:
+          await _updateUser({'bio': userdata as String});
+        default:
+      }
+    } on FirebaseException catch (e) {
+      throw ServerException(
+        message: e.message ?? ' Error Occured',
+        statusCode: e.code,
+      );
+    } on ServerException {
+      rethrow;
+    } catch (e, stack) {
+      debugPrintStack(stackTrace: stack);
+      throw ServerException(message: e.toString(), statusCode: 500);
     }
   }
 
@@ -152,5 +191,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
             fullName: user.displayName ?? '',
           ).toMap(),
         );
+  }
+
+  Future<void> _updateUser(DataMap data) async {
+    await _cloudStoreClient
+        .collection('users')
+        .doc(_authClient.currentUser?.uid)
+        .update(data);
   }
 }
