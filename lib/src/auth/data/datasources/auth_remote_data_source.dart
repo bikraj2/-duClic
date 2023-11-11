@@ -67,7 +67,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }) async {
     try {
       final result = await _authClient.signInWithEmailAndPassword(
-          email: email, password: password);
+        email: email,
+        password: password,
+      );
       final user = result.user;
       if (user == null) {
         throw const ServerException(
@@ -94,10 +96,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<void> signUp(
-      {required String email,
-      required String fullName,
-      required String password}) async {
+  Future<void> signUp({
+    required String email,
+    required String fullName,
+    required String password,
+  }) async {
     try {
       final userCreds = await _authClient.createUserWithEmailAndPassword(
         email: email,
@@ -129,8 +132,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<void> updateUser(
-      {required UpdateUserAction action, required dynamic userdata}) async {
+  Future<void> updateUser({
+    required UpdateUserAction action,
+    required dynamic userdata,
+  }) async {
     try {
       switch (action) {
         case UpdateUserAction.email:
@@ -139,14 +144,16 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         case UpdateUserAction.displayName:
           await _authClient.currentUser?.updateDisplayName(userdata as String);
           await _updateUser({'fullName': userdata});
+          print('here');
         case UpdateUserAction.profilePic:
           final ref = _dbclient
               .ref()
               .child('profilePics/${_authClient.currentUser?.uid}');
           await ref.putFile(userdata as File);
           final url = await ref.getDownloadURL();
-          await _authClient.currentUser?.updateDisplayName(url);
-          await _updateUser({'fullName': url});
+          await _authClient.currentUser?.updatePhotoURL(url);
+          await _updateUser({'profilePic': url});
+        // for Password
         case UpdateUserAction.password:
           if (_authClient.currentUser == null) {
             throw const ServerException(
@@ -156,14 +163,15 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           await _authClient.currentUser?.reauthenticateWithCredential(
             EmailAuthProvider.credential(
               email: _authClient.currentUser!.email!,
-              password: newData['oldPassowrd'] as String,
+              password: newData['oldPassword'] as String,
             ),
           );
           await _authClient.currentUser
               ?.updatePassword(newData['newPassword'] as String);
+
         case UpdateUserAction.bio:
           await _updateUser({'bio': userdata as String});
-        default:
+        case UpdateUserAction.pass:
       }
     } on FirebaseException catch (e) {
       throw ServerException(

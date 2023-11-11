@@ -14,7 +14,7 @@ class SignIn extends UseCaseWithParams<void, SignInParams> {
 
 class SignInParams extends Equatable {
   const SignInParams({required this.email, required this.password});
-
+  const SignInParams.empty() : this(email: 'email', password: 'pasword');
   final String password;
   final String email;
 

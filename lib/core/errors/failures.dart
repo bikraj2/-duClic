@@ -19,7 +19,7 @@ abstract class Failure extends Equatable {
 }
 
 class ApiFailure extends Failure {
-  ApiFailure({
+   ApiFailure({
     required super.message,
     required super.statusCode,
   });

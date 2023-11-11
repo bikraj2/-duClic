@@ -14,7 +14,7 @@ class ForgetPassword extends UseCaseWithParams<void, ForgotPasswordParams> {
 
 class ForgotPasswordParams extends Equatable {
   const ForgotPasswordParams({required this.email});
-
+  const ForgotPasswordParams.empty() : this(email: 'email');
   final String email;
   @override
   List<Object?> get props => [email];
