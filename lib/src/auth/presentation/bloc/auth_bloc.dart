@@ -32,6 +32,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<SignUpEvent>(_signUpHandler);
     on<ForgotPasswordEvent>(_forgotPasswordHandler);
     on<UpdateUserEvent>(_updateUserHandler);
+    on<LogOut>(
+      (event, emit) => emit(LoggedOut()),
+    );
   }
   final SignIn _signIn;
   final SignUp _signUp;

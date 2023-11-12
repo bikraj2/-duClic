@@ -1,13 +1,13 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sikshya/core/errors/exceptions.dart';
 
+const kFirstTimer = 'first_timer';
+
 abstract class OnBoardingLocalDataSource {
   const OnBoardingLocalDataSource();
   Future<void> cacheFirstTimer();
   Future<bool> checkIfUserIsFirstTimer();
 }
-
-const kFirstTimer = 'first_timer';
 
 class OnBoardingLocalDataSourceImpl extends OnBoardingLocalDataSource {
   const OnBoardingLocalDataSourceImpl(this._pref);

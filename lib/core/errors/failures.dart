@@ -15,11 +15,11 @@ abstract class Failure extends Equatable {
   List<Object?> get props => [message, statusCode];
 
   String get errorMessage =>
-      "$statusCode: ${statusCode is String ? ' ' : 'Error: $message'}";
+      "$statusCode: ${statusCode.runtimeType != String ? ' ' : 'Error: $message'}";
 }
 
 class ApiFailure extends Failure {
-   ApiFailure({
+  ApiFailure({
     required super.message,
     required super.statusCode,
   });

@@ -52,3 +52,7 @@ class UpdateUserEvent extends AuthEvent {
   @override
   List<Object?> get props => [action, userdata];
 }
+
+class LogOut extends AuthEvent {
+  const LogOut();
+}

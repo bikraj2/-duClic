@@ -5,7 +5,6 @@ import 'package:sikshya/core/common/views/loading_screen.dart';
 import 'package:sikshya/core/common/widgets/gradient_background.dart';
 import 'package:sikshya/core/res/app_colours.dart';
 import 'package:sikshya/core/res/media_res.dart';
-import 'package:sikshya/core/services/injection_container.dart';
 import 'package:sikshya/src/on_boarding/domain/page_content.dart';
 import 'package:sikshya/src/on_boarding/presentation/cubit/on_boarding_cubit.dart';
 import 'package:sikshya/src/on_boarding/presentation/widgets/on_boarding_body.dart';
@@ -37,9 +36,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
             {context.push('/home')}
           // ignore: inference_failure_on_collection_literal
           else if (state is UserCached)
-            {
-              // TODO(User-Cached-Handler): Push to the appopriate screen
-            }
+            context.go('/'),
         },
         builder: (context, state) {
           if (state is CheckingIfUserFirstTimer || state is CachingFirstTimer) {

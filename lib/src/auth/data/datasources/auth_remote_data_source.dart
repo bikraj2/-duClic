@@ -81,6 +81,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       }
       await _setUserData(user, email);
       userData = await _getUserData(user.uid);
+      debugPrintThrottled('message');
       return LocalUserModel.fromMap(userData.data()!);
     } on FirebaseAuthException catch (e) {
       throw ServerException(

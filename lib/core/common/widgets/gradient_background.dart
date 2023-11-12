@@ -8,6 +8,7 @@ class GradientBackground extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       constraints: const BoxConstraints.expand(),
+      padding: EdgeInsets.all(15),
       decoration: BoxDecoration(
         image: DecorationImage(
           image: AssetImage(
